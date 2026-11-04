@@ -1,0 +1,12 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>QueryX</title>
+  <defs>
+    <linearGradient id="queryx-gradient" x1="4" y1="4" x2="21" y2="21" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4F46E5"/>
+      <stop offset="1" stop-color="#3B82F6"/>
+    </linearGradient>
+  </defs>
+  <circle cx="10.5" cy="10.5" r="7.25" stroke="url(#queryx-gradient)" stroke-width="3.1"/>
+  <path d="M15.65 15.65L20.85 20.85" stroke="url(#queryx-gradient)" stroke-width="3.1" stroke-linecap="round"/>
+  <circle cx="10.5" cy="10.5" r="1.35" fill="url(#queryx-gradient)"/>
+</svg>

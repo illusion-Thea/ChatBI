@@ -1,6 +1,11 @@
+import io
+import zipfile
+
 import pytest
 from fastapi.testclient import TestClient
+
 from commercial.main import create_app
+
 
 @pytest.fixture
 def setup(tmp_path, monkeypatch):
@@ -36,7 +41,7 @@ def test_rbac_and_identity_headers_are_not_trusted(setup):
     assert client.get('/api/v1/users',headers={'X-Role':'admin'}).status_code == 403
     assert client.post('/api/v1/questions',headers={**headers,'X-Role':'admin','X-User':'admin'},json={'question':'今年每个月的已支付销售额是多少？'}).status_code == 403
 
-def test_persistent_ownership_favorites_and_csv(setup):
+def test_persistent_ownership_favorites_and_excel(setup):
     app, client = setup
     headers=login(client)
     response=client.post('/api/v1/questions',headers=headers,json={'question':'今年每个月的已支付销售额是多少？'})
@@ -52,7 +57,15 @@ def test_persistent_ownership_favorites_and_csv(setup):
     if record['result']:
         export=client.get(f"/api/v1/questions/{record['id']}/export")
         assert export.status_code==200
-        assert 'text/csv' in export.headers['content-type']
+        assert 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' in export.headers['content-type']
+        assert export.headers['content-disposition'].endswith('.xlsx"')
+        with zipfile.ZipFile(io.BytesIO(export.content)) as workbook:
+            assert {'xl/worksheets/sheet1.xml','xl/worksheets/sheet2.xml','xl/sharedStrings.xml'} <= set(workbook.namelist())
+            shared=workbook.read('xl/sharedStrings.xml').decode('utf-8')
+            assert 'QueryX 查询结果' in shared
+            assert '月份' in shared
+            assert '已支付销售额（元）' in shared
+            assert '业务含义' in shared
 
 def test_cannot_disable_last_admin(setup):
     _,client=setup; headers=login(client)
@@ -61,12 +74,17 @@ def test_cannot_disable_last_admin(setup):
 
 def test_cross_user_access_and_session_revocation(setup):
     app,client=setup; headers=login(client)
-    from backend.app.schemas import QuestionRecord, QueryResult
+    from backend.app.schemas import QueryResult, QuestionRecord
     record=QuestionRecord(id='owned-private',question='Private query',requested_by='admin',result=QueryResult(columns=['value'],rows=[{'value':'=HYPERLINK("evil")'}],row_count=1,elapsed_ms=0))
     app.state.repository.save_question(record)
     export=client.get('/api/v1/questions/owned-private/export')
     assert export.status_code==200
-    assert "'=HYPERLINK" in export.text
+    assert 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' in export.headers['content-type']
+    with zipfile.ZipFile(io.BytesIO(export.content)) as workbook:
+        shared=workbook.read('xl/sharedStrings.xml').decode('utf-8')
+        sheet=workbook.read('xl/worksheets/sheet1.xml').decode('utf-8')
+        assert '=HYPERLINK' in shared
+        assert '<f>' not in sheet
     client.post('/api/v1/users',headers=headers,json={'username':'analyst1','display_name':'Analyst','password':'Analyst-Password-2026!','role':'analyst'})
     with TestClient(app) as other:
         login(other,'analyst1','Analyst-Password-2026!')

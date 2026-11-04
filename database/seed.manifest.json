@@ -1,0 +1,19 @@
+{
+  "seed": 20261104,
+  "counts": {
+    "regions": 50,
+    "categories": 50,
+    "products": 150,
+    "customers": 250,
+    "orders": 360,
+    "order_items": 500
+  },
+  "date_range": {
+    "first_order": "2025-01-03T09:27:36",
+    "last_order": "2026-10-26T18:00:09"
+  },
+  "paid_orders": 292,
+  "paid_revenue": "302235.41",
+  "seed_sql_bytes": 72558,
+  "seed_sql_sha256": "8993ba89e170eeb3685f637b04ad8b856e950ad64b66bb79ee66a5d1e54e2b56"
+}

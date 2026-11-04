@@ -9,7 +9,7 @@ if packages.exists(): sys.path.insert(0,str(packages))
 sys.path.insert(0,str(ROOT))
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser(description='Data Agent 内部数据平台')
+    parser=argparse.ArgumentParser(description='QueryX 内部数据平台')
     parser.add_argument('--port',type=int,default=8012)
     args=parser.parse_args()
     if not (ROOT/'frontend-vben/apps/web-business/dist/index.html').exists():

@@ -1,18 +1,16 @@
 from __future__ import annotations
+
 import asyncio
-import csv
-import io
 import os
-from pathlib import Path
 import re
 import secrets
 import sqlite3
 import time
+from pathlib import Path
 from typing import Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
-from fastapi.responses import JSONResponse
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 
@@ -23,7 +21,10 @@ from backend.app.metadata import MetadataCatalog
 from backend.app.pipeline import QuestionPipeline
 from backend.app.schemas import ApprovalRequest, QuestionCreate
 from backend.app.sql_guard import SqlGuard
+
+from .excel_export import build_query_workbook
 from .repository import Repository, password_hash, password_matches, token_hash
+
 
 class Login(BaseModel):
     username: str = Field(min_length=1,max_length=64)
@@ -183,13 +184,12 @@ def create_app(path: Path | None = None):
     def export(key:str,user=Depends(current)):
         record=owned(key,user)
         if not record.result: raise HTTPException(409,'当前查询没有可导出的结果')
-        out=io.StringIO(); writer=csv.writer(out); writer.writerow(record.result.columns)
-        def safe(value):
-            if isinstance(value,str) and value.lstrip().startswith(('=','+','-','@','\t','\r')): return "'"+value
-            return value
-        for row in record.result.rows: writer.writerow([safe(row.get(k)) for k in record.result.columns])
-        repository.event(user['username'],'export',key)
-        return Response('\ufeff'+out.getvalue(),media_type='text/csv',headers={'Content-Disposition':f'attachment; filename="{key}.csv"'})
+        content=build_query_workbook(record,user['username'])
+        repository.event(user['username'],'export_excel',key)
+        return Response(content,media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',headers={
+            'Content-Disposition':f'attachment; filename="queryx-{key}.xlsx"',
+            'X-Content-Type-Options':'nosniff',
+        })
 
     @app.get('/api/v1/history')
     def history(page:int=Query(1,ge=1),page_size:int=Query(20,ge=1,le=100),search:str=Query('',max_length=200),status:str='',user=Depends(current)):

@@ -237,7 +237,7 @@
       <div class="detail" aria-live="polite">
         <div class="step-index" id="step-index">01</div>
         <div><h2 id="step-title">用户提出业务问题</h2><p id="step-description">用户在 Vue 工作台输入中文问题；前端只负责收集输入和展示状态，不承担 SQL 安全判断。</p></div>
-        <div class="code-ref">当前代码位置<code id="step-code">frontend/src/App.vue → api.ts</code></div>
+        <div class="code-ref">当前代码位置<code id="step-code">frontend-vben/apps/web-business/src/views/data-agent/workbench.vue → api.ts</code></div>
       </div>
     </section>
 
@@ -287,7 +287,7 @@
   <script>
     (() => {
       const steps = [
-        { title: "用户提出业务问题", description: "用户在 Vue 工作台输入中文问题；前端只负责收集输入和展示状态，不承担 SQL 安全判断。", code: "frontend/src/App.vue → api.ts" },
+        { title: "用户提出业务问题", description: "用户在 QueryX 工作台输入中文问题；前端只负责收集输入和展示状态，不承担 SQL 安全判断。", code: "frontend-vben/apps/web-business/src/views/data-agent/workbench.vue → api.ts" },
         { title: "API 创建可追踪记录", description: "FastAPI 校验请求，Pipeline 生成请求 ID，写入 RECEIVED 状态并保存第一条时间线事件。", code: "backend/app/api.py → pipeline.py → store.py" },
         { title: "加载允许暴露的数据结构", description: "MetadataCatalog 从 information_schema 读取白名单表及字段，形成提供给规则或模型的受限上下文。", code: "backend/app/metadata.py" },
         { title: "生成结构化候选 SQL", description: "规则 Provider 或兼容 OpenAI 的模型返回 SQL、口径假设、参数和建议图表；此时 SQL 仍无执行权。", code: "backend/app/llm.py" },

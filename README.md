@@ -198,10 +198,7 @@ python scripts/check_secrets.py
 | `npm run dev` | 当前企业平台前端开发服务 |
 | `npm run build` / `npm run build:business` | 当前平台生产资源构建 |
 | `npm start` | 构建资源的本机单服务预览，端口 8013 |
-| `npm run dev:previous` | 较早的 Vben 页面，仅用于历史对照 |
-| `npm run dev:legacy` | 原始 Vue 界面，仅用于历史对照 |
-
-`app.py`、`frontend/` 和 `web-antd` 是早期入口，**不要将其作为当前平台的生产入口**。它们不具备相同的账号与访问边界。
+旧版 `frontend/` 和 `web-antd` 已移除；当前只保留 QueryX 企业平台入口。
 
 ## 配置说明
 

@@ -1,0 +1,29 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: data-agent-local-mysql
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${BUSINESS_DB_PORT:-3307}:3306"
+    environment:
+      MYSQL_DATABASE: ${BUSINESS_DB_NAME:-data_agent_local}
+      MYSQL_USER: ${BUSINESS_DB_USER:-data_agent_ro}
+      MYSQL_PASSWORD: ${BUSINESS_DB_PASSWORD:?Set BUSINESS_DB_PASSWORD in the environment}
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - data_agent_mysql:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/20-seed.sql:ro
+      - ./database/docker-init-readonly.sh:/docker-entrypoint-initdb.d/30-readonly.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  data_agent_mysql:

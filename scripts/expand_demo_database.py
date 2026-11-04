@@ -11,7 +11,7 @@ import runpy
 import pymysql
 
 ROOT = Path(__file__).resolve().parents[1]
-ARTIFACTS = ROOT / '.runtime' / 'vben-migration'
+ARTIFACTS = ROOT / '.runtime' / 'queryx-migration'
 TABLES = ('regions', 'categories', 'products', 'customers', 'orders', 'order_items')
 
 def digest(rows):

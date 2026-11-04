@@ -66,7 +66,7 @@ Data Agent 是一个面向 MySQL 的安全智能问数 MVP：用户用中文提�
 
 ```text
 data_agent/
-├─ app.py                         # 本地后端入口，优先转交项目 .venv
+├─ start_business.py              # QueryX 同源平台启动入口
 ├─ pyproject.toml / uv.lock       # Python 项目、依赖、pytest/Ruff 配置
 ├─ package.json                   # 根目录前端命令代理
 ├─ .env / .env.example            # 当前环境与配置模板（不要提交真实密钥）
@@ -83,12 +83,11 @@ data_agent/
 │  │  ├─ visualization.py         # 根据结果推断图表规格
 │  │  └─ store.py                 # 进程内请求记录仓库
 │  └─ tests/                      # 配置、规则、SQL Guard、Pipeline 测试
-├─ frontend/
-│  ├─ src/App.vue                 # 主页面、提问、审批和执行轨迹
-│  ├─ src/api.ts                  # 前端 API 封装
-│  ├─ src/types.ts                # 后端响应对应的 TypeScript 类型
-│  ├─ src/components/ResultView.vue # ECharts/表格结果组件
-│  └─ vite.config.ts              # 本地 /api 代理到 8000 端口
+├─ frontend-vben/apps/web-business/
+│  ├─ src/views/data-agent/workbench.vue # 主页面、提问、审批和执行轨迹
+│  ├─ src/views/data-agent/api.ts        # 前端 API 封装
+│  ├─ src/views/data-agent/types.ts      # 后端响应对应的 TypeScript 类型
+│  └─ src/views/data-agent/result-chart.vue # ECharts/表格结果组件
 ├─ scripts/
 │  ├─ init_demo_database.py       # 创建 6 张表、确定性造数、创建只读账号
 │  ├─ bootstrap_readonly_user.sql # 生产接入时的只读账号参考脚本
@@ -232,8 +231,8 @@ regions ──< customers ──< orders ──< order_items >── products >�
 根目录终端 1：
 
 ```powershell
-uv sync
-python app.py
+    uv sync
+    python start_business.py --port 8013
 ```
 
 根目录终端 2：
@@ -289,8 +288,8 @@ npm run build
 
 推荐阅读顺序：
 
-1. `frontend/src/App.vue`：用户动作和页面状态。
-2. `frontend/src/api.ts`：每个动作调用哪个 API。
+1. `frontend-vben/apps/web-business/src/views/data-agent/workbench.vue`：用户动作和页面状态。
+2. `frontend-vben/apps/web-business/src/views/data-agent/api.ts`：每个动作调用哪个 API。
 3. `backend/app/api.py`：HTTP 如何进入业务层。
 4. `backend/app/pipeline.py`：全项目主干，先通读两遍。
 5. `backend/app/schemas.py`：状态、风险和记录结构。
@@ -298,7 +297,7 @@ npm run build
 7. `backend/app/sql_guard.py`：最重要的安全模块。
 8. `backend/app/database.py`：预检和执行边界。
 9. `backend/app/metadata.py`、`visualization.py`、`store.py`：支撑模块。
-10. `frontend/src/components/ResultView.vue`：结果如何变成图表。
+10. `frontend-vben/apps/web-business/src/views/data-agent/result-chart.vue`：结果如何变成图表。
 
 每读一个模块都回答三个问题：它接收什么、产出什么、失败时由谁处理。
 

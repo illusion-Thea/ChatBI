@@ -4,11 +4,8 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "pnpm --dir frontend-vben --filter @data-agent/web dev",
-    "dev:legacy": "npm --prefix frontend run dev",
     "build": "pnpm --dir frontend-vben --filter @data-agent/web build",
-    "build:legacy": "npm --prefix frontend run build",
     "build:business": "pnpm --dir frontend-vben --filter @data-agent/web build",
-    "start": "python start_business.py --port 8013",
-    "dev:previous": "pnpm --dir frontend-vben --filter @vben/web-antd dev"
+    "start": "python start_business.py --port 8013"
   }
 }
